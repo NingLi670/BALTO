@@ -1,0 +1,5 @@
+# BALTO paper configuration with the Megatron backend.
+defaults:
+  - ppo_megatron_trainer
+  - balto
+  - _self_

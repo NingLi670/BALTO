@@ -1,0 +1,5 @@
+# BALTO paper configuration with the FSDP backend.
+defaults:
+  - ppo_trainer
+  - balto
+  - _self_

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "balto-training"
+version = "0.1.0"
+description = "Balanced Token-Level Policy Optimization for hallucination mitigation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+dependencies = [
+  "accelerate", "codetiming", "datasets", "dill", "hydra-core>=1.3,<1.4",
+  "numpy<2", "pandas", "peft", "pyarrow>=19", "pybind11", "pylatexenc",
+  "ray[default]>=2.41.0", "torch>=2.6", "torchdata",
+  "tensordict>=0.8.0,<=0.10.0,!=0.9.0", "transformers", "wandb",
+  "packaging>=20", "tensorboard", "openai>=1.50,<3",
+]
+
+[project.optional-dependencies]
+# Backend versions follow the pinned upstream checkout's setup.py. They have
+# not yet been validated by a GPU training run of this release.
+sglang = ["sglang[srt,openai]==0.5.6", "torch==2.9.1"]
+megatron = ["mbridge"]
+vllm = ["vllm>=0.8.5,<=0.12.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["verl*", "reward_models*", "inference*", "evaluation*"]
+
+[tool.setuptools.package-data]
+verl = ["version/*", "trainer/config/**/*.yaml", "trainer/config/*.yaml"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+isort = {known-first-party = ["verl", "reward_models", "inference", "evaluation"]}

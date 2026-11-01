@@ -1,0 +1,18 @@
+defaults:
+  - balto_megatron_trainer
+  - balto_task
+  - _self_
+
+hydra:
+  searchpath:
+    - pkg://verl.trainer.config
+
+actor_rollout_ref:
+  actor:
+    megatron:
+      tensor_model_parallel_size: 2
+      context_parallel_size: 2
+      pipeline_model_parallel_size: 1
+      sequence_parallel: true
+  rollout:
+    tensor_model_parallel_size: 2

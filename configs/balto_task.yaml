@@ -1,0 +1,51 @@
+# Shared task adapter. The algorithm is defined in verl/trainer/config/balto.yaml.
+custom_reward_function:
+  path: ${oc.env:BALTO_RELEASE_ROOT}/reward_models/reward_function/reward_function.py
+  name: compute_score_batch
+  reward_kwargs:
+    tokenizer_path: ${oc.select:actor_rollout_ref.model.tokenizer_path,${actor_rollout_ref.model.path}}
+    judge_base_url: ${oc.env:BALTO_JUDGE_BASE_URL}
+    judge_model: ${oc.env:BALTO_JUDGE_MODEL}
+    task: auto
+    workers: 16
+    timeout: 120
+    retries: 3
+    max_tokens: 8192
+    temperature: 0.0
+    enable_thinking: null
+
+data:
+  train_files: ${oc.env:BALTO_TRAIN_DATA}
+  val_files: ${oc.env:BALTO_VAL_DATA}
+  max_prompt_length: 12000
+  max_response_length: 8192
+  filter_overlong_prompts: true
+  truncation: error
+
+actor_rollout_ref:
+  model:
+    path: ${oc.env:BALTO_MODEL_PATH}
+    tokenizer_path: ${actor_rollout_ref.model.path}
+  rollout:
+    name: sglang
+    mode: async
+    temperature: 1.0
+    top_p: 1.0
+    val_kwargs:
+      n: 1
+      do_sample: true
+      temperature: 0.6
+      top_p: 0.95
+
+trainer:
+  logger: [console, tensorboard]
+  total_epochs: 1
+  nnodes: 1
+  n_gpus_per_node: 8
+  save_freq: 20
+  test_freq: 20
+  resume_mode: disable
+  log_val_generations: 0
+  validation_data_dir: null
+  rollout_data_dir: null
+  default_local_dir: ${oc.env:BALTO_RELEASE_ROOT}/checkpoints/${trainer.experiment_name}
